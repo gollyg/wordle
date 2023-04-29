@@ -1,0 +1,8 @@
+.DS_Store
+project.json
+.env
+ksql-migrations.properties
+*_apikeys.json
+terraform
+files/*
+!files/README.md

@@ -1,0 +1,34 @@
+{
+    "project_name": "metering_demo",
+    "environments": [
+        {
+            "display_name": "metering-demo",
+            "schema_registry": {
+                "cloud": "AWS",
+                "region": "ap-southeast-2",
+                "package": "ADVANCED"
+            },
+            "clusters": [
+                {
+                    "display_name": "metering",
+                    "type": "standard",
+                    "availability": "SINGLE_ZONE",
+                    "networking": "public",
+                    "cloud": "GCP",
+                    "region": "australia-southeast1",
+                    "topics": [
+                    ],
+                    "ksqldb": [
+                        {
+                            "display_name": "metering_application",
+                            "csu": "1"
+                        }
+                    ],
+                    "connectors": [
+                    ]
+                }
+            ]
+        }
+    ]
+
+}
