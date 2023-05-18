@@ -3,7 +3,7 @@ project.json
 .env
 ksql-migrations.properties
 *_apikeys.json
-terraform
+/terraform
 files/*
 !files/README.md
 *.code-workspace
