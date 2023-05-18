@@ -122,22 +122,19 @@ resource "aws_instance" "cwd" {
 
   provisioner "remote-exec" {
     inline = [
+      "echo \"CLUSTER_CLOUD=aws\" >> /etc/environment",
+      "echo \"CLUSTER_REGION=ap-southeast-2\" >> /etc/environment",
+      "echo \"YOUREMAIL=jgollan+org@confluent.io\" >> /etc/environment",
+      "echo \"WEBHOSTNAME=${aws_instance.cwd.public_dns}\" >> /etc/environment",
+      "echo \"BOOTSTRAP_SERVERS=env('BOOTSTRAP_SERVERS')\" >> /etc/environment",
+      "echo \"USERNAME=env('API_KEY')\" >> /etc/environment",
+      "echo \"PASSWORD=env('API_SECRET')\" >> /etc/environment",
       "cd /home/ubuntu",
       "git clone https://github.com/gollyg/wordle.git",
       "cd /home/ubuntu/wordle/aws/app",
+      "sudo chmod o+x setup-cwd.sh",
       "./setup-cwd.sh"
     ]
-
-    environment = {
-      "CLUSTER_CLOUD" = "aws"
-      "CLUSTER_REGION" = "ap-southeast-2"
-      "YOUREMAIL" = "jgollan+org@confluent.io"
-      "WEBHOSTNAME" = "${aws_instance.cwd.public_dns}"
-      "BOOTSTRAP_SERVERS" = env("BOOTSTRAP_SERVERS")
-      "USERNAME" = env("API_KEY")
-      "PASSWORD" = env("API_SECRET")
-
-    }
   }
 
   connection {
