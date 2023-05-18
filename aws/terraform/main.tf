@@ -124,16 +124,20 @@ resource "aws_instance" "cwd" {
     inline = [
       "cd /home/ubuntu",
       "git clone https://github.com/gollyg/wordle.git",
-      "echo 'export CLUSTER_CLOUD=\"aws\"' > /home/ubuntu/wordle/aws/app/env.config",
-      "echo 'export CLUSTER_REGION=\"ap-southeast-2\"' >> /home/ubuntu/wordle/aws/app/env.config",
-      "echo 'export YOUREMAIL=\"jgollan+org@confluent.io\"' >> /home/ubuntu/wordle/aws/app/env.config",
-      "echo 'export WEBHOSTNAME=\"${aws_instance.cwd.public_dns}\"' >> /home/ubuntu/wordle/aws/app/env.config",
-      "echo 'export BOOTSTRAP_SERVERS=\"${BOOTSTRAP_SERVERS}\"' >> /home/ubuntu/wordle/aws/app/env.config",
-      "echo 'export USERNAME=\"${API_KEY}\"' >> /home/ubuntu/wordle/aws/app/env.config",
-      "echo 'export PASSWORD=\"${API_SECRET}\"' >> /home/ubuntu/wordle/aws/app/env.config",
       "cd /home/ubuntu/wordle/aws/app",
       "./setup-cwd.sh"
     ]
+
+    environment = {
+      "CLUSTER_CLOUD" = "aws"
+      "CLUSTER_REGION" = "ap-southeast-2"
+      "YOUREMAIL" = "jgollan+org@confluent.io"
+      "WEBHOSTNAME" = "${aws_instance.cwd.public_dns}"
+      "BOOTSTRAP_SERVERS" = env("BOOTSTRAP_SERVERS")
+      "USERNAME" = env("API_KEY")
+      "PASSWORD" = env("API_SECRET")
+
+    }
   }
 
   connection {
