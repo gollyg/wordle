@@ -6,3 +6,4 @@ ksql-migrations.properties
 terraform
 files/*
 !files/README.md
+*.code-workspace

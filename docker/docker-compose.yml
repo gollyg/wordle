@@ -2,45 +2,20 @@
 ---
 version: '3.4'
 services:
-  
-  metering:
-    container_name: ${COMPOSE_PROJECT_NAME}_metering
-    restart: always
-    build:
-      context: .
-      dockerfile: python.Dockerfile
+  ksqldb-cli:
+    image: confluentinc/cp-ksqldb-cli:7.2.1
+    container_name: ${COMPOSE_PROJECT_NAME}_ksqldb-cli
+    entrypoint: /bin/sh
+    volumes:
+      - ./ksql/migrations:/opt/docker/migrations/:rw
+    tty: true
     environment:
-      AWS_NUMBER_OF_CUSTOMERS: ${AWS_NUMBER_OF_CUSTOMERS}
-      AWS_METERING_INTERVAL_SECONDS: ${AWS_METERING_INTERVAL_SECONDS}
-      AWS_MYSQL_USER: ${AWS_MYSQL_USER}
-      AWS_MYSQL_PASSWORD: ${AWS_MYSQL_PASSWORD}
-      AWS_MYSQL_HOST: ${AWS_MYSQL_HOST}
-      AWS_MYSQL_PORT: ${AWS_MYSQL_PORT}
-      AWS_MYSQL_DATABASE: ${AWS_MYSQL_DATABASE}
-
-  # # DB management utilities
-  # loyalty-adminer:
-  #   image: adminer:4.8.0
-  #   container_name: ${COMPOSE_PROJECT_NAME}_adminer
-  #   restart: always
-  #   ports:
-  #     - 8086:8080
-
-  # add ksqldb migrations
-  # ksqldb-cli:
-  #   image: confluentinc/cp-ksqldb-cli:7.2.1
-  #   container_name: ${COMPOSE_PROJECT_NAME}_ksqldb-cli
-  #   entrypoint: /bin/sh
-  #   volumes:
-  #     - ./ksql/migrations:/opt/docker/migrations/:rw
-  #   tty: true
-  #   environment:
-  #     SR_API_KEY: $SR_API_KEY
-  #     SR_API_SECRET: $SR_API_SECRET
-  #     SCHEMA_REGISTRY_URL: $SR_ENDPOINT
-  #     BOOTSTRAP_SERVERS: $BOOTSTRAP_SERVERS
-  #     API_KEY: $API_KEY
-  #     API_SECRET: $API_SECRET
-  #     KSQL_ENDPOINT: $KSQL_ENDPOINT
-  #     KSQL_API_KEY: $KSQL_API_KEY
-  #     KSQL_API_SECRET: $KSQL_API_SECRET
+      SR_API_KEY: $SR_API_KEY
+      SR_API_SECRET: $SR_API_SECRET
+      SCHEMA_REGISTRY_URL: $SR_ENDPOINT
+      BOOTSTRAP_SERVERS: $BOOTSTRAP_SERVERS
+      API_KEY: $API_KEY
+      API_SECRET: $API_SECRET
+      KSQL_ENDPOINT: $KSQL_ENDPOINT
+      KSQL_API_KEY: $KSQL_API_KEY
+      KSQL_API_SECRET: $KSQL_API_SECRET
