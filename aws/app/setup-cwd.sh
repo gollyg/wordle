@@ -24,3 +24,17 @@ CMD="sed -e $SEDCMD cwd/apache2/sites-available/wordle.conf > wordle.conf && sud
 eval $CMD \
   && print_code_pass -c "$CMD" \
     || exit_with_error -c $? -n "$NAME" -m "$CMD" -l $(($LINENO -3))
+
+printf "\nAdding ccloud python config to Wordle app\n"
+sudo sh -c 'awk "/^producer = Producer/,/})/" delta_configs/python.delta | awk "!/(plugin|location|configuration)/" > /var/www/wsgi/cwd/kafka.config'
+sudo sed -i "/###PRODUCER START###/r /var/www/wsgi/cwd/kafka.config" /var/www/wsgi/cwd/app.py
+sudo sh -c 'cd /var/www/wsgi/cwd && python3 init.py && chown -R www-data:www-data .'
+sudo systemctl restart apache2
+:
+printf "\nConfiguring filebeat to send to CC\n"
+sudo cp filebeat.yml /etc/filebeat/filebeat.yml
+sudo cp filebeat.apache.yml /etc/filebeat/modules.d/apache.yml
+sudo sed -i "s ###BOOTSTRAP### $BOOTSTRAP_SERVERS " /etc/filebeat/filebeat.yml
+sudo sed -i "s ###USERNAME### $CLOUD_KEY " /etc/filebeat/filebeat.yml
+sudo sed -i "s ###PASSWORD### $CLOUD_SECRET " /etc/filebeat/filebeat.yml
+sudo systemctl restart filebeat
