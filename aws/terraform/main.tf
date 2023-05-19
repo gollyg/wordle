@@ -8,6 +8,7 @@ locals {
     Creator = "terraform",
     owner_email = "jgollan@confluent.io"
   }
+  ec2_home = "/home/ubuntu"
 }
 
 resource "aws_vpc" "cwd" {
@@ -122,13 +123,14 @@ resource "aws_instance" "cwd" {
 
   provisioner "remote-exec" {
     inline = [
-      "echo \"CLUSTER_CLOUD=aws\" >> /etc/environment",
-      "echo \"CLUSTER_REGION=ap-southeast-2\" >> /etc/environment",
-      "echo \"YOUREMAIL=jgollan+org@confluent.io\" >> /etc/environment",
-      "echo \"WEBHOSTNAME=${aws_instance.cwd.public_dns}\" >> /etc/environment",
-      "echo \"BOOTSTRAP_SERVERS=env('BOOTSTRAP_SERVERS')\" >> /etc/environment",
-      "echo \"USERNAME=env('API_KEY')\" >> /etc/environment",
-      "echo \"PASSWORD=env('API_SECRET')\" >> /etc/environment",
+      "echo \"export CLUSTER_CLOUD=aws\" >> ${local.ec2_home}/.bashrc",
+      "echo \"export CLUSTER_REGION=ap-southeast-2\" >> ${local.ec2_home}/.bashrc",
+      "echo \"export YOUREMAIL=jgollan+org@confluent.io\" >> ${local.ec2_home}/.bashrc",
+      "echo \"export WEBHOSTNAME=${aws_instance.cwd.public_dns}\" >> ${local.ec2_home}/.bashrc",
+      "echo \"export BOOTSTRAP_SERVERS=env('BOOTSTRAP_SERVERS')\" >> ${local.ec2_home}/.bashrc",
+      "echo \"export USERNAME=env('API_KEY')\" >> ${local.ec2_home}/.bashrc",
+      "echo \"export PASSWORD=env('API_SECRET')\" >> ${local.ec2_home}/.bashrc",
+      "source ${local.ec2_home}/.bashrc",
       "cd /home/ubuntu",
       "git clone https://github.com/gollyg/wordle.git",
       "cd /home/ubuntu/wordle/aws/app",
